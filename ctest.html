@@ -1,0 +1,277 @@
+<html>
+<head>
+<title>Coronis Test Framework</title>
+<script lang="javascript" src="jquery-1.4.2.min.js"></script>
+<script lang="javascript" src="jquery.json-2.2.min.js"></script>
+<script lang="javascript" src="shortcut.js"></script>
+
+<script lang="javascript" src="ctest.js"></script>
+<script lang="javascript" src="ctestui.js"></script>
+<script lang="javascript" src="commands.js"></script>
+<script lang="javascript" src="interpreter.js"></script>
+
+<style type="text/css">
+<!--
+body{
+	font-size: 0.9em;
+}
+
+body.all_test_passed{
+	background: #aaffaa;
+}
+
+body.failed_tests{
+	background: red;
+}
+
+
+h1 a {
+	color: black;
+	display: inline;
+	text-decoration: none;
+	float: left;
+	margin-right: 1em;
+}
+
+iframe {
+	border: 1px solid blue;
+}
+
+div#progress_text{
+	cursor: default;
+}
+
+div#command_panel{
+	cursor: default;
+}
+
+div#command_panel td{
+	vertical-align: top;
+	border-bottom: 1px solid #eee;
+}
+
+div#command_panel tr{
+	border-bottom: 1px solid #aaa;
+	cursor: pointer;
+}
+
+div#command_panel th{
+	font-size: 0.8em;
+	font-weight: bold;
+	color: #aaa;
+	font-family: monospace;
+}
+div#command_panel tr.breakpoint th{
+	background: red;
+	color: black;
+}
+div#command_panel tr.breakpoint td{
+	border-bottom: 1px solid red;
+	color: black;
+}
+
+div#command_panel pre{
+	margin: 0px;
+}
+
+div#command_panel ul{
+	width: 100%;
+	padding: 0px;
+	list-style: none;
+}
+
+
+div#command_panel pre.doing{
+	background: yellow;
+}
+
+div#command_panel pre.done{
+	color: #33aa33;
+	background: white;
+}
+
+div#command_panel pre.error{
+	color: white;
+	background: red;
+}
+div#command_panel pre.comment{
+	background: blue;
+	color: white;
+	font-weight: bold;
+}
+
+#commandbox{
+	width: 100%;
+	height: 90%;
+	overflow: scroll;
+	border: 1px solid #aaa;
+}
+
+#status{
+	border: 1px solid black;
+	background: #eee;
+	height: 1em;
+	overflow: hidden;
+	float: right;
+	bottom: 0px;
+	display: inline;
+}
+.hidden{
+	display: none;
+}
+pre.status{
+	color: green;
+	margin: 0px;
+}
+pre.error{
+	color: red;
+	margin: 0px;
+}
+pre.cmd{
+	color: blue;
+	margin: 0px;
+}
+pre.debug{
+	color: #aaaaaa;
+	margin: 0px;
+}
+pre.vars{
+	font-weight: bold;
+}
+input[type="text"]{
+	border: 1px solid black;
+	width: 75%;
+}
+.extra{
+	font-size: 0.7em;
+	cursor: pointer;
+	color: blue;
+}
+div.overwindow{
+	position:fixed; 
+	width: 75%; 
+	height: 80%;
+	left:12.5%;
+	top: 10%;
+	z-index:102;
+	overflow: auto;
+	background:#FFFFFF none repeat scroll 0 0;
+	border: 1px solid black;
+	display: block;
+	padding: 1em; 
+}
+div.greywindow {
+	position: fixed;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	background:#000;
+	opacity:0.8;
+	z-index: 100;
+}
+
+div#command{
+	padding-top: 0px;
+}
+
+#runcommand table{
+  width: 100%;
+}
+
+#runcommand td.input{
+  width: 90%;
+}
+
+#runcommand input{
+  width: 100%;
+}
+
+-->
+</style>
+
+</head>
+
+<body>
+<h1><a href="?" title="Restart Coronis Tests">CTest</a></h1>
+<form method="GET">
+Suite file: <input type="text" name="load" id="load" value="suite.ctest"/> 
+<input type="submit" value="Load suite"/> 
+<input type="button" id="go" value="Go!"/>
+</form>
+<br/>
+<span id="command_count">0</span> commands
+|
+<a class="extra" onclick="javascript:ctestui.toggleLog()" title="Shows the progress log. Also key 'l'">Show progress log</a>
+|
+<a class="extra" onclick="javascript:ctestui.toggleCommandPanel()" title="Shows the command panel. Also key 'p'">Show command panels</a>
+|
+<a class="extra" onclick="javascript:ctest.step()" title="Performs a step execution. Also key 's'">Step</a>
+|
+<a class="extra" onclick="javascript:ctest.run()" title="Continues the execution, ignores last error. Also key 'c'">Continue</a>
+|
+Time elapsed: <span class="time_elapsed">00:00</span>
+|
+<a class="extra" id="showurl" href="/" target="extra">/</a>
+
+<div id="status">Wait for loading...</div>
+
+<div id="command_panel">
+<div id="control">
+Test file:
+<select id="fileselector">
+</select>
+|
+<a class="extra" onclick="javascript:ctestui.showVars();ctestui.toggleLog()" title="Show variables 'v'. Show all at the log.">Variables</a>
+|
+<a class="extra" onclick="javascript:ctest.step()" title="Performs a step execution. Also key 's'">Step</a>
+|
+<a class="extra" onclick="javascript:ctest.run()" title="Continues the execution, ignores last error. Also key 'c'">Continue</a>
+|
+Time elapsed: <span class="time_elapsed">00:00</span>
+|
+<a class="extra" onclick="javascript:ctest.runFromLatestBreakpoint()" title="Starts execution, starting on latest set breakpoint. Also key 'b'">Start from latest breakpoint</a>
+|
+<a class="extra" onclick="javascript:ctest.doGo()" title="Starts the tests. Also key 'Crtl+G'">Go!</a>
+
+
+</div>
+
+<div id="commandbox"></div>
+
+</div>
+
+<div id="progress_text">
+Wait for loading...
+</div>
+
+<iframe width="100%" height="80%" src="/" id="ctest_iframe=" name="ctest_iframe">
+</iframe>
+
+<form id="runcommand">
+<table>
+ <tr>
+  <td><input type="submit" value="Run command"/></td>
+  <td class="input"><input id="runcommand" name="runcommand"/></td>
+ </tr>
+</table>
+</form>
+
+<div id="runhistory"><pre>
+# Interactive console history.
+</pre></div>
+
+</body>
+
+<script>
+ctestui=false
+ctest=false
+$(document).ready(function(){
+	ctestui=new CTestUI()
+	ctest=new CTest()
+
+	ctestui.toggleCommandPanel()
+})
+</script>
+
+</html>
