@@ -186,6 +186,7 @@ CTest = function(){
 			ctestui.log('Breakpoint!')
 			ctestui.showCommand(command)
 			ctest.ignoreNextBreakpoint=true
+			ctest.running=false
 			return;
 		}
 		ctest.ignoreNextBreakpoint=false

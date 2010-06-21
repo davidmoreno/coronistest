@@ -34,6 +34,10 @@ clickAll = function(){
 	el=doc.getElementById('cmd_test_01_step_test_ctest_1')
 	el2=doc.getElementById('cmd_test_01_step_test_ctest_2')
 	el3=doc.getElementById('cmd_test_01_step_test_ctest_3')
+	el4=doc.getElementById('cmd_test_01_step_test_ctest_4')
+	el5=doc.getElementById('cmd_test_01_step_test_ctest_5')
+	el6=doc.getElementById('cmd_test_01_step_test_ctest_6')
+	el7=doc.getElementById('cmd_test_01_step_test_ctest_7')
 	tr=el.parentElement.parentElement
 	otr=tr
 	while (tr){
@@ -97,12 +101,51 @@ checkStep_2 = function(){
 		alert('Step ran away. Should have stopped on next step (marked place)')
 		return;
 	}
-	if (n==100){
-		alert('took too long to run')
+	else{
+		doClick(doc.getElementById('step'))
+		setTimeout(checkStep_3, 1000)
+	}
+}
+checkStep_3 = function(){
+	if (el4.className=='done'){
+		el4.className='comment';
+		alert('Step ran away. Should have stopped on next step (marked place)')
 		return;
-	}	
-	doClick(doc.getElementById('step'))
-	n++;	
+	}
+	else{
+		doClick(doc.getElementById('step'))
+		setTimeout(checkStep_4, 1000)
+	}
+}
+checkStep_4 = function(){
+	if (el5.className=='done'){
+		el5.className='comment';
+		alert('Step ran away. Should have stopped on next step (marked place)')
+		return;
+	}
+	else{
+		doClick(doc.getElementById('continue'))
+		setTimeout(checkStep_5, 3000)
+	}
+}
+
+checkStep_5 = function(){
+	if (el6.className!='done'){
+		el5.className='comment';
+		alert('Step dit not ran away. Should have NOT stopped on next step (marked place)')
+		return;
+	}
+	else{
+		if (doc.getElementsByClassName('all_test_passed').length==1){
+			if (top.ctt.nextTest)
+				top.ctt.nextTest()
+			else
+				alert('ok')
+		}
+		else{
+			alert('It should have passed all tests')
+		}
+	}
 }
 
 window.onload=function(){
@@ -110,6 +153,6 @@ window.onload=function(){
 }
 </script>
 <div style="align: center;">
-<iframe id="ifr" src="../../ctest.html?load=test/01-step/test.ctest" width="98%" height="98%"></iframe>
+<iframe id="ifr" src="../../ctest.html?load=test/01-step/test.ctest" width="100%" height="98%"></iframe>
 </div>
 </html>

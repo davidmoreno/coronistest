@@ -3,6 +3,8 @@
  */
 ctt = { }
 
+ctt.nTests=1
+
 ctt.nextTest = function(){
 }
 
@@ -12,17 +14,29 @@ ctt.setColor = function(el, color){
 
 ctt.doSuite = function(){
 	ctt.setColor('suiteresult','yellow')
-	ctt.nextTest=function(){
+	ctt.nextTestFinal=function(){
 		ctt.setColor('suiteresult','green')
 	}
-	ctt.doTest1()
+	ctt.doTest(1,true)
 }
 
 /// Tests simple step on coronis test.
-ctt.doTest1 = function(){
-	ctt.setColor('testresult_1','yellow')
-	setTimeout(function(){
-		ctt.setColor('testresult_1','green')
-			ctt.nextTest()
-		}, 1000);
+ctt.doTest = function(n, more){
+	if (n>ctt.nTests){
+		ctt.nextTestFinal()
+		return;
+	}
+	ctt.setColor('testresult_'+n,'yellow')
+	ctt.nextTest = function(){
+		ctt.setColor('testresult_'+n,'green')
+		if (more)
+			ctt.doTest(n+1,true)
+	}
+	loadIframe('0'+n+'-step/index.html')
+}
+
+
+// Loads something on an iframe
+loadIframe = function(html){
+	document.getElementById('iframe').setAttribute('src',html)
 }
