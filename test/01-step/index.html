@@ -1,0 +1,115 @@
+<html>
+<script>
+dir = function(el){
+	var l=[]
+	for (var i in el)
+		l.push(i)
+	l.sort()
+	return l
+}
+
+clickEvent=false
+doClick = function(el){
+	if (!clickEvent){
+		clickEvent=doc.createEvent('MouseEvent')
+		clickEvent.initEvent('click',false, false)
+	}
+	el.dispatchEvent(clickEvent)
+}
+
+reallyload = function(){
+	var ifr=document.getElementById('ifr')
+	doc=ifr.contentDocument
+	go=doc.getElementById('go')
+
+	clickAll()
+
+	doClick(go)
+
+
+	setTimeout(doNextContinue, 100)
+}
+
+clickAll = function(){
+	el=doc.getElementById('cmd_test_01_step_test_ctest_1')
+	el2=doc.getElementById('cmd_test_01_step_test_ctest_2')
+	el3=doc.getElementById('cmd_test_01_step_test_ctest_3')
+	tr=el.parentElement.parentElement
+	otr=tr
+	while (tr){
+		doClick(tr)
+		tr=tr.nextElementSibling
+	}
+}
+
+n=0;
+doNextContinue = function(){
+	if (doc.getElementsByClassName('all_test_passed').length==1){
+		clickAll()
+		doClick(go)
+		if (el3.className=='done'){
+			alert('Not cleared the run status')
+			return;
+		}
+
+		n=0;
+		setTimeout(checkNormalRun, 100)
+		return;
+	}
+	if (n==100){
+		alert('error, is not continuing to next break')
+		return;
+	}	
+
+	doClick(doc.getElementById('continue'))
+	n++;
+	setTimeout(doNextContinue, 100)
+}
+
+checkNormalRun = function(){
+	if (doc.getElementsByClassName('all_test_passed').length==1){
+		clickAll()
+		doClick(go)
+		setTimeout(function(){ clickAll(); checkStep_1(); }, 100)
+		return;
+	}
+	if (n==100){
+		alert('took too long to run')
+		return;
+	}	
+	n++;
+	setTimeout(checkNormalRun, 100)
+}
+
+checkStep_1 = function(){
+	if (n==100){
+		alert('took too long to run')
+		return;
+	}	
+	doClick(doc.getElementById('step'))
+	n++;	
+	setTimeout(checkStep_2, 1000)
+}
+
+checkStep_2 = function(){
+	if (el3.className=='done'){
+		el3.className='comment';
+		alert('Step ran away. Should have stopped on next step (marked place)')
+		return;
+	}
+	if (n==100){
+		alert('took too long to run')
+		return;
+	}	
+	doClick(doc.getElementById('step'))
+	n++;	
+}
+
+window.onload=function(){
+	setTimeout(reallyload, 500);
+}
+</script>
+<div style="align: center;">
+<iframe id="ifr" src="../../ctest.html?load=test/01-step/test.ctest" width="98%" height="98%"></iframe>
+</div>
+</html>

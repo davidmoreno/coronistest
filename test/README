@@ -1,0 +1,13 @@
+Testing
+=======
+
+To do the testing, create a webserver with coronis-test, and point the browser to [coronis-test]/test/index.html.
+
+One very easy way to do it is:
+
+.../coronis-test/$ busybox httpd -f -p 8080 . 
+
+And you have your webserver at http://localhost:8080/test/
+
+Individual tests can be run accessing to http://localhost:8080/test/01-step/ ...
+

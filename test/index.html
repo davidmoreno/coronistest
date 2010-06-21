@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Coronis Test tester</title>
+<script src="test.js"></script>
+</head>
+<body>
+<h1>Coronis Test tester</h1>
+As coronis test is a test framework I dont think is good idea to use itself to test it, nor another 
+test framewok. So The only option left is to create a custom tester. 
+
+<p/>
+On this tester there is no jQuery nor any other helper libs, as they may interfere. Just press the main button
+<b>Test</b> to start the full suite, or a custom test with every button.
+
+<p/>
+For security reason on browsers, its better if you host this somehwere and use it <b>throught a web server</b>.
+
+<hr/>
+<div id="suiteresult">
+<input type="button" onclick="ctt.doSuite()" value="Test"/> 
+</div>
+<hr/>
+<div id="testresult_1">
+<input type="button" onclick="ctt.doTest1()" value="Test 1"/>
+</div>
+</body>

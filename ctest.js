@@ -323,6 +323,7 @@ CTest = function(){
 	*/
 	this.doGo = function(runNow){
 		ctest.resetVM()
+		ctestui.clearCommandStatus()
 
 		var file=$('#load').attr('value')
 		ctest.runFile(file)

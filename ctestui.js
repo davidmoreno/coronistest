@@ -141,6 +141,13 @@ CTestUI = function(){
 				this.scrollTo($('#commandbox'),l)
 	}
 
+	/// Clears the status of all commands, done when starting a new run
+	this.clearCommandStatus = function(){
+		$('#commandbox pre').removeClass('done')
+		$('#commandbox pre').removeClass('doing')
+		$('#commandbox pre').removeClass('error')
+	}
+
 	this.setCommandComment = function(cmd, txt){
 		if (!cmd || cmd.length<4)
 			return
