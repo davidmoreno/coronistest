@@ -1,0 +1,4 @@
+log('test')
+load('test2.ctest')
+log('never here')
+

@@ -1,0 +1,71 @@
+<html>
+<script>
+dir = function(el){
+	var l=[]
+	for (var i in el)
+		l.push(i)
+	l.sort()
+	return l
+}
+
+clickEvent=false
+doClick = function(el){
+	if (!clickEvent){
+		clickEvent=doc.createEvent('MouseEvent')
+		clickEvent.initEvent('click',false, false)
+	}
+	el.dispatchEvent(clickEvent)
+}
+
+reallyload = function(){
+	var ifr=document.getElementById('ifr')
+	doc=ifr.contentDocument
+	go=doc.getElementById('go')
+
+	doClick(go)
+
+	setTimeout(checkError, 1000)
+}
+
+checkError = function(){
+	if (doc.getElementsByClassName('all_test_passed').length==1){
+		alert('Should have been an error')
+		return;
+	}
+	if (doc.getElementsByClassName('failed_tests').length==0){
+		// no error yet
+		setTimeout(checkError, 500)
+		return;
+	}
+	if (String(doc.getElementById('fileselector').value).indexOf('test2.ctest')<0){
+		alert('Not on the right file after stop')
+		return;
+	}
+	tb=doc.getElementById('cmds_test_02_gotoerror__test2_ctest')
+	el=tb.getElementsByClassName('error')[0]
+	tr=el.parentElement.parentElement
+	pos=tr.offsetTop
+	cmd=doc.getElementById('commandbox')
+	sTop=cmd.scrollTop
+	cmd.scrollByPages(1)
+	sBottom=cmd.scrollTop
+
+	if (!(pos>sTop && pos<sBottom)){
+		alert('Not in view! need scroll to view it')
+		return;
+	}
+
+	if (top.ctt && top.ctt.nextTest)
+		top.ctt.nextTest()
+	else
+		alert('ok')
+}
+
+window.onload=function(){
+	setTimeout(reallyload, 500);
+}
+</script>
+<div style="align: center;">
+<iframe id="ifr" src="../../ctest.html?load=test/02-gotoerror/test.ctest" width="100%" height="98%"></iframe>
+</div>
+</html>

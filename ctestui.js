@@ -39,8 +39,18 @@ CTestUI = function(){
 	}
 
 	/// Performs scroll so that child is viewable
-	this.scrollTo = function(p, c){
-		p[0].scrollTop=c[0].offsetTop+(p.height()/2)
+	this.scrollTo = function(_p, _c){
+		var p=_p[0]
+		var c=_c[0]
+		var pos=0
+		while(c!=p){
+			pos+=c.offsetTop
+			c=c.offsetParent
+			if (!c)
+				break;
+		}
+		pos=pos-(_p.height()/2)
+		p.scrollTop=pos
 	}
 
 	/// Shows/hides the log panel
@@ -166,9 +176,9 @@ CTestUI = function(){
 		var line=cmd[3]
 		$('#control #fileselector').attr('value',file)
 		ctestui.showCurrentSourceFile()
-		var l=$('#cmd_'+file+'_'+line)
+		var l=$('#cmd_'+filename(file)+'_'+line)
 		if (l.length)
-			this.scrollTo($('#commandbox'),l.parent())
+			ctestui.scrollTo($('#commandbox'),l)
 	}
 
 	/// A new URL was loaded

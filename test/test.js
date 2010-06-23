@@ -3,7 +3,7 @@
  */
 ctt = { }
 
-ctt.nTests=1
+ctt.testname=['01-step','02-gotoerror']
 
 ctt.nextTest = function(){
 }
@@ -22,7 +22,7 @@ ctt.doSuite = function(){
 
 /// Tests simple step on coronis test.
 ctt.doTest = function(n, more){
-	if (n>ctt.nTests){
+	if (n>ctt.testname.length){
 		ctt.nextTestFinal()
 		return;
 	}
@@ -32,7 +32,7 @@ ctt.doTest = function(n, more){
 		if (more)
 			ctt.doTest(n+1,true)
 	}
-	loadIframe('0'+n+'-step/index.html')
+	loadIframe(ctt.testname[n-1]+'/index.html')
 }
 
 
