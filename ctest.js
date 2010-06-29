@@ -180,6 +180,8 @@ CTest = function(){
 	this.doInstruction = function(command, onSuccess, onFailure){
 		//ctestui.log('do instruction: '+$.toJSON(command))
 		ctest.notHereCounter=100
+		if (ctestui.followCommand)
+			ctestui.showCommand(command)
 
 		if (ctest.running && !ctest.ignoreNextBreakpoint &&
 			ctest.breakpoints[command[2]] && ctest.breakpoints[command[2]][command[3]]) {
@@ -505,10 +507,13 @@ CTest = function(){
 			ctest.pageLoaded=true
 
 			// Overwrite default bhaviour of some browser parts
-			if (ctest.lastAlert)
+			if (ctest.lastAlert){
+				ctestui.log(printStackTrace().join('\n'))
 				ctest.stopExecuting('There was an unmanaged alert: '+ctest.lastAlert)
-			this.contentWindow.alert=function(txt){ 
+			}
+			this.contentWindow.alert=function(txt){
 				ctestui.log('alert: '+txt); 
+				ctestui.log(printStackTrace().join('\n'))
 				if (parent.ctest.lastAlert)
 					stopExecuting('There was an unmanaged alert, and appeared a new one: '+ctest.lastAlert)
 				parent.ctest.lastAlert=txt; 
@@ -546,5 +551,13 @@ CTest = function(){
 
 	this.startup()
 	return this
+
 }
 
+oldalert=window.alert
+window.alert = function(txt){
+	ctestui.log('ALERT: '+String(txt))
+	ctestui.log(printStackTrace().join('\n'))
+	oldalert('ALERT')
+	oldalert(txt)
+}

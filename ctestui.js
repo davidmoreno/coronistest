@@ -2,6 +2,8 @@ CTestUI = function(){
 
 	ctestui=this
 
+	this.followCommand=false
+
 	var filename = function(file){
 		return file.replace(/\./g,'_').replace(/\-/g,'_').replace(/ /g,'_').replace(/\//g,'_')
 	}
@@ -235,6 +237,11 @@ CTestUI = function(){
 		})
 		txt=cmd[0]+'('+_vars.join(', ')+')'
 		this.log(txt,'cmd')
+	}
+
+	/// Sets the follow command variable.
+	this.switchFollowCommand = function(){
+		this.followCommand=$('#follow:checked').length>0
 	}
 
 	/// Runs the command at #runcommand, and adds it to history if succesfull.

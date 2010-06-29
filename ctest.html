@@ -3,6 +3,7 @@
 <title>Coronis Test Framework</title>
 <script lang="javascript" src="jquery-1.4.2.min.js"></script>
 <script lang="javascript" src="jquery.json-2.2.min.js"></script>
+<script lang="javascript" src="stacktrace.min.js"></script>
 <script lang="javascript" src="shortcut.js"></script>
 
 <script lang="javascript" src="ctest.js"></script>
@@ -231,6 +232,8 @@ Test file:
 Time elapsed: <span class="time_elapsed">00:00</span>
 |
 <a class="extra" onclick="javascript:ctest.runFromLatestBreakpoint()" title="Starts execution, starting on latest set breakpoint. Also key 'b'">Start from latest breakpoint</a>
+|
+<input type="checkbox" id="follow" name="follow" onclick="ctestui.switchFollowCommand()"><label for="follow">Follow execution</label>
 |
 <a class="extra" onclick="javascript:ctest.doGo()" title="Starts the tests. Also key 'Crtl+G'">Go!</a>
 
