@@ -94,7 +94,7 @@ commands = {
 		alreadyClicked=false
 		$$$(element).first().each(function(){
 			var t=$(this)
-			var ev=document.createEvent('MouseEvent')
+			var ev=$('iframe')[0].contentDocument.createEvent('MouseEvent')
 			var offset=t.offset()
 			var sx=offset.top;
 			var sy=offset.left;
@@ -103,14 +103,21 @@ commands = {
 			
 			if ($.browser.msie)
 				buttonpressed=1
-
 			if ($.browser.mozilla){
 				if (this.tagName=="A" && !alreadyClicked){ 
 					ctestui.log('Opening HREF at mozilla: '+t.attr('href'))
+					var js=t.attr('onclick')
+					if (js){
+						with( frames[0].window ){
+							var ok=js()
+							if (!ok)
+								return;
+						}
+					}
 					var _href=t.attr('href')
 					if (_href.substr(0,11)=='javascript:')
 						injectScript(_href.substr(11))
-					else
+					else if (_href[0]!='#')
 						commands.open(_href,{'wait':false}) // should not wait, none of the others wait.
 					alreadyClicked=true
 				}
@@ -118,7 +125,7 @@ commands = {
 				ev.initEvent('click', false, false);
 			}
 			else
-				ev.initMouseEvent("click", true, true, $('iframe')[0], 1, 
+				ev.initMouseEvent("click", true, true, $('iframe')[0].contentWindow, 1, 
 					sx, sy, 0, 0, 
 					false, false, false, false, buttonpressed, null);
 			//ev.initEvent('click',true,true)
@@ -174,18 +181,20 @@ commands = {
 		if (_opts)
 			opts=_opts
 
+		if (text[0]!='/'){
+			var c=$('iframe')[0].contentWindow.location.href
+			if (c[c.length-1]=='/')
+				text=c+text
+			else{ // must change the last part from /a/b/c with d, to /a/b/d
+				text=c.substr(0,c.lastIndexOf('/'))+'/'+text
+			}
+		}
+
 		ctestui.log('opening '+text)
-		try{
-			$$$('#injected_button_ctest_'+ctest.commandCount)
-		}
-		catch(e){
-			injectData('<div style="display: none;"><input type="button" id="injected_button_ctest_'+ctest.commandCount+'" value="Open next" onclick="document.location.href=\''+text+'\'"/></div>')
-			throw(e)
-		}
+
 		if (opts['wait']) 
 			ctest.loadCustomData('waitLoad()')
-		$$$('#injected_button_ctest_'+ctest.commandCount).click()
-		//ctestui.log('opened')
+		$('iframe')[0].contentWindow.location.href=text
 	}
 	,
 	/// Verifies an element does not exist; this one does not wait to check if it does not exist after, but just now. 
@@ -294,8 +303,8 @@ commands = {
 		var val=$$$('option='+txt).val()
 		//ctestui.log('select '+el)
 		el.val(val)
-		var ev=document.createEvent('HTMLEvents')
-		ev.initEvent('change')
+		var ev=$('iframe')[0].contentDocument.createEvent('HTMLEvents')
+		ev.initEvent('change',true,true)
 		el[0].dispatchEvent(ev)
 
 		var oncl=el.attr('onchange')

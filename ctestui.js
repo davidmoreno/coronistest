@@ -133,9 +133,12 @@ CTestUI = function(){
 	this.showCurrentSourceFile = function(){
 		var sf=$('#control #fileselector').attr('value')
 		var file=filename(sf)
-		ctestui.debug('Selected file: '+sf)
-		$('#commandbox table').addClass('hidden')
-		$('#commandbox #cmds_'+file).removeClass('hidden')
+		//ctestui.debug('Selected file: '+sf)
+		var me=$('#commandbox #cmds_'+file)
+		if (me.hasClass('hidden')){
+			$('#commandbox table').addClass('hidden')
+			me.removeClass('hidden')
+		}
 	}
 
 
@@ -294,7 +297,11 @@ CTestUI = function(){
 		$('#command #fileselector').change(this.showCurrentSourceFile)
 
 		if (location.hash){
-			$('iframe').attr('src',location.hash.substr(1))
+			try{
+				$('iframe').attr('src',location.hash.substr(1))
+			}
+			catch(e){
+			}
 		}
 	}
 
