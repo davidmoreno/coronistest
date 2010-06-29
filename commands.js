@@ -52,8 +52,9 @@ injectData = function(data){
  */
 injectScript = function(data){
 	ctestui.debug('injecting javascript: '+data)
-	eval('frames[0].'+data) // easiest and ugliest execute. 
-	//injectData('<script>'+data+'</script>')
+	with(frames[0].window){
+		eval(data) // easiest and ugliest execute. 
+	}
 }
 
 /**
@@ -118,7 +119,7 @@ commands = {
 					if (_href.substr(0,11)=='javascript:')
 						injectScript(_href.substr(11))
 					else if (_href[0]!='#')
-						commands.open(_href,{'wait':false}) // should not wait, none of the others wait.
+						commands.open(_href,false) // should not wait, none of the others wait.
 					alreadyClicked=true
 				}
 				//ev=document.createEvent('HTMLEvent')
@@ -176,10 +177,8 @@ commands = {
 	}
 	,
 	/// opens a given url
-	'open' : function(text,_opts){
-		var opts={'wait':true} // default options
-		if (_opts)
-			opts=_opts
+	'open' : function(text,wait){
+		wait=(wait!=false)
 
 		if (text[0]!='/'){
 			var c=$('iframe')[0].contentWindow.location.href
@@ -192,7 +191,7 @@ commands = {
 
 		ctestui.log('opening '+text)
 
-		if (opts['wait']) 
+		if (wait) 
 			ctest.loadCustomData('waitLoad()')
 		$('iframe')[0].contentWindow.location.href=text
 	}

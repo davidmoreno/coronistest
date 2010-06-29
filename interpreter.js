@@ -173,9 +173,10 @@ CTestInterpreter = function(stream,file){
 
 		if (id=='load'){
 			joinpath = function(path, file){
+				var r=file;
 				if (path)
-					return path+'/'+file
-				return file
+					r=path+'/'+file
+				return r.replace('//','/').replace('//','/')
 			}
 			dirname = function(file){
 				var dn=file.replace(/[^/]*$/,'')
