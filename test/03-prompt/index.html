@@ -1,0 +1,90 @@
+<html>
+<script>
+dir = function(el){
+	var l=[]
+	for (var i in el)
+		l.push(i)
+	l.sort()
+	return l
+}
+
+clickEvent=false
+doClick = function(el){
+	if (!clickEvent){
+		clickEvent=doc.createEvent('MouseEvent')
+		clickEvent.initEvent('click',false, false)
+	}
+	el.dispatchEvent(clickEvent)
+}
+
+reallyload = function(){
+	var ifr=document.getElementById('ifr')
+	doc=ifr.contentDocument
+	go=doc.getElementById('go')
+
+	doClick(go)
+
+	setTimeout(checkPrompt, 1000)
+}
+
+reallyLoad2 = function(){
+	var ifr=document.getElementById('ifr')
+	doc=ifr.contentDocument
+	go=doc.getElementById('go')
+
+	doClick(go)
+	setTimeout(checkErrorAlert, 1000)
+}
+
+n=0
+
+checkPrompt = function(){
+	n+=500
+	if (n>10000){
+		alert('Test could not finish')
+		return;
+	}
+
+	if (doc.getElementsByClassName('failed_tests').length!=0){
+		alert('Failed test. Should not fail at all.')
+		return;
+	}
+
+	if (doc.getElementsByClassName('all_test_passed').length==0){
+		setTimeout(checkPrompt, 500)
+		return;
+	}
+
+
+	var ifr=document.getElementById('ifr')
+	ifr.src="../../ctest.html?load=test/03-prompt/test2.ctest"
+
+	setTimeout(reallyLoad2,500)
+}
+
+checkErrorAlert = function(){
+	if (doc.getElementsByClassName('all_test_passed').length==1){
+		alert('Should have been an error')
+		return;
+	}
+	if (doc.getElementsByClassName('failed_tests').length==0){
+		// no error yet
+		setTimeout(checkError, 500)
+		return;
+	}
+
+	if (top.ctt && top.ctt.nextTest)
+		top.ctt.nextTest()
+	else
+		alert('ok')
+
+}
+
+window.onload=function(){
+	setTimeout(reallyload, 500);
+}
+</script>
+<div style="align: center;">
+<iframe id="ifr" src="../../ctest.html?load=test/03-prompt/test.ctest" width="100%" height="98%"></iframe>
+</div>
+</html>

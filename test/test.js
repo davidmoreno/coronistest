@@ -3,7 +3,7 @@
  */
 ctt = { }
 
-ctt.testname=['01-step','02-gotoerror']
+ctt.testname=['01-step','02-gotoerror','03-prompt']
 
 ctt.nextTest = function(){
 }

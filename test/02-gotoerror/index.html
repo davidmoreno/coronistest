@@ -41,24 +41,29 @@ checkError = function(){
 		alert('Not on the right file after stop')
 		return;
 	}
-	tb=doc.getElementById('cmds_test_02_gotoerror__test2_ctest')
-	el=tb.getElementsByClassName('error')[0]
-	tr=el.parentElement.parentElement
-	pos=tr.offsetTop
-	cmd=doc.getElementById('commandbox')
-	sTop=cmd.scrollTop
-	cmd.scrollByPages(1)
-	sBottom=cmd.scrollTop
+	try{
+		tb=doc.getElementById('cmds_test_02_gotoerror_test2_ctest')
+		el=tb.getElementsByClassName('error')[0]
+		tr=el.parentElement.parentElement
+		pos=tr.offsetTop
+		cmd=doc.getElementById('commandbox')
+		sTop=cmd.scrollTop
+		cmd.scrollByPages(1)
+		sBottom=cmd.scrollTop
 
-	if (!(pos>sTop && pos<sBottom)){
-		alert('Not in view! need scroll to view it')
-		return;
+		if (!(pos>sTop && pos<sBottom)){
+			alert('Not in view! need scroll to view it')
+			return;
+		}
+
+		if (top.ctt && top.ctt.nextTest)
+			top.ctt.nextTest()
+		else
+			alert('ok')
 	}
-
-	if (top.ctt && top.ctt.nextTest)
-		top.ctt.nextTest()
-	else
-		alert('ok')
+	catch(e){
+		alert('Error getting highlighted element.')
+	}
 }
 
 window.onload=function(){

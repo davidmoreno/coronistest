@@ -246,6 +246,7 @@ commands = {
 				throw( { may_appear_later : false, text : 'Wrong alert found, waiting for'+reg+', found '+txt } )
 		}
 		ctest.lastAlert=false
+		ctest.nextAlert=undefined
 	}
 	,
 	// Waits for a prompt. If some text given that text is used as regexp to match
@@ -259,6 +260,7 @@ commands = {
 				throw( { may_appear_later : false, text : 'Wrong prompt found, waiting for'+reg+', found '+txt } )
 		}
 		ctest.lastPrompt=false
+		ctest.nextPrompt=undefined
 	}
 	,
 	// Waits for a confirmation. If some text given that text is used as regexp to match
@@ -266,12 +268,20 @@ commands = {
 		if (!ctest.lastConfirm){
 			throw( { may_appear_later : true, text : 'No confirmation yet' } )
 		}
+		ctestui.log('confirm appeared with text: '+ctest.lastConfirm); 
+
 		if (reg){
 			re=RegExp(reg)
 			if (!re.match(ctest.lastConfirm))
 				throw( { may_appear_later : false, text : 'Wrong confirm found, waiting for'+reg+', found '+txt } )
 		}
 		ctest.lastConfirm=false
+		ctest.nextConfirm=undefined
+	}
+	,
+	// Prepares the system to receive an alert (only one) soon.
+	'nextAlert' : function(){
+		ctest.nextAlert=true
 	}
 	,
 	// Sets the next confirmation

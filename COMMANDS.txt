@@ -63,6 +63,15 @@ errorOnNext()
 An error is expected on next command. If it succeeds then it fails, and if 
 it fails it succeed. Usefull for example to check if some text is not present.
 
+nextAlert()
+-----------
+
+Prepares the system to receive just one alert soon. This is necesary for when there 
+is an alert and then it loads a page. In such case there is the race condition 
+that the page is loaded before or after the "waitAlert()" is there. If it loads
+after, then no problem. If it loads before then the ctest fails as there was an
+unexepected alert, unless you are expecting it. 
+
 nextConfirm(bool)
 ----------------
 

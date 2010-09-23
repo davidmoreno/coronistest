@@ -28,7 +28,7 @@ CTest = function(){
 	this.nextConfirm=true
 
 	/// Milliseconds to wait between retries, usually 100 retries
-	this.stepSpeed=100
+	this.stepSpeed=25
 	// How many commands passed
 	this.commandCount = 0
 	// If running just now
@@ -507,34 +507,38 @@ CTest = function(){
 			ctest.pageLoaded=true
 
 			// Overwrite default bhaviour of some browser parts
-			if (ctest.lastAlert){
+			ctestui.log('alert status: '+ctest.lastAlert+' / '+ctest.nextAlert)
+			if (ctest.lastAlert && ctest.nextAlert==undefined){
 				ctestui.log(printStackTrace().join('\n'))
 				ctest.stopExecuting('There was an unmanaged alert: '+ctest.lastAlert)
 			}
+
+			// 2010 09 22 -- all ctest instances were parent.ctest. Dont know exactly why.
 			this.contentWindow.alert=function(txt){
 				ctestui.log('alert: '+txt); 
-				ctestui.log(printStackTrace().join('\n'))
-				if (parent.ctest.lastAlert)
+				//ctestui.log(printStackTrace().join('\n'))
+				if (ctest.lastAlert)
 					stopExecuting('There was an unmanaged alert, and appeared a new one: '+ctest.lastAlert)
-				parent.ctest.lastAlert=txt; 
+				ctest.lastAlert=txt; 
 			}
-			if (ctest.lastPrompt)
+			if (ctest.lastPrompt && ctest.nextPrompt==undefined)
 				ctest.stopExecuting('There was an unmanaged prompt: '+ctest.lastPrompt)
 			this.contentWindow.prompt=function(txt){ 
 				ctestui.log('prompt: '+txt); 
-				if (parent.ctest.lastPrompt)
+				if (ctest.lastPrompt)
 					stopExecuting('There was an unmanaged prompt, and appeared a new one: '+ctest.lastPrompt)
-				parent.ctest.lastPrompt=txt; 
-				return parent.ctest.nextPrompt;
+				ctest.lastPrompt=txt; 
+				return ctest.nextPrompt;
 			}
-			if (ctest.lastConfirm)
+			if (ctest.lastConfirm && ctest.nextConfirm==undefined)
 				ctest.stopExecuting('There was an unmanaged confirmation: '+ctest.lastconfirm)
 			this.contentWindow.confirm=function(txt){ 
 				ctestui.log('confirm: '+txt); 
-				if (parent.ctest.lastConfirm)
+				ctestui.log('confirm answer: '+ctest.nextConfirm); 
+				if (ctest.lastConfirm)
 					stopExecuting('There was an unmanaged confirmation, and appeared a new one: '+ctest.lastconfirm)
-				parent.ctest.lastConfirm=txt; 
-				return parent.ctest.nextConfirm;
+				ctest.lastConfirm=txt; 
+				return ctest.nextConfirm;
 			}
 		})
 
@@ -553,7 +557,7 @@ CTest = function(){
 	return this
 
 }
-
+/*
 oldalert=window.alert
 window.alert = function(txt){
 	ctestui.log('ALERT: '+String(txt))
@@ -561,3 +565,4 @@ window.alert = function(txt){
 	oldalert('ALERT')
 	oldalert(txt)
 }
+*/

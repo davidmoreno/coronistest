@@ -1,0 +1,29 @@
+open('/static/ctest/test/03-prompt/test.html')
+
+# alert
+nextAlert()
+click('#balert')
+waitAlert()
+
+# confirm
+nextConfirm(true)
+click('#bconfirm',true)
+waitConfirm()
+
+nextConfirm(false)
+click('#bconfirm')
+waitConfirm()
+errorOnNext()
+waitLoad()
+
+
+# prompt
+nextPrompt('Hello')
+click('#bprompt',true)
+waitPrompt()
+
+nextPrompt('')
+click('#bprompt')
+waitPrompt()
+errorOnNext()
+waitLoad()
