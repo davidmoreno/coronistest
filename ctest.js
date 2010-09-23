@@ -23,9 +23,9 @@ CTest = function(){
 	// last issued alert, should be null unless waiting for it.
 	this.lastConfirm=false
 	/// Answer for the next prompt
-	this.nextPrompt=""
+	this.nextPrompt=undefined
 	/// Answer for the next confirm
-	this.nextConfirm=true
+	this.nextConfirm=undefined
 
 	/// Milliseconds to wait between retries, usually 100 retries
 	this.stepSpeed=25
@@ -316,8 +316,10 @@ CTest = function(){
 
 	/// Runs a given filename
 	this.runFile = function(filename){
-		if (!(filename in ctest.code))
-			throw({may_appear_later:false, text:'File "'+filename+'" never loaded, can not continue'})
+		if (!(filename in ctest.code)){
+			ctest.stopExecuting('File '+filename+' never loaded. Cant continue.')
+			//throw({may_appear_later:false, text:'File "'+filename+'" never loaded, can not continue'})
+		}
 		this.stack.push({'cp':0,'fp':filename,'code':ctest.code[filename]})
 	}
 
@@ -507,7 +509,7 @@ CTest = function(){
 			ctest.pageLoaded=true
 
 			// Overwrite default bhaviour of some browser parts
-			ctestui.log('alert status: '+ctest.lastAlert+' / '+ctest.nextAlert)
+			//ctestui.log('alert status: '+ctest.lastAlert+' / '+ctest.nextAlert)
 			if (ctest.lastAlert && ctest.nextAlert==undefined){
 				ctestui.log(printStackTrace().join('\n'))
 				ctest.stopExecuting('There was an unmanaged alert: '+ctest.lastAlert)

@@ -17,23 +17,28 @@ doClick = function(el){
 	el.dispatchEvent(clickEvent)
 }
 
-reallyload = function(){
+reallyLoad = function(f){
 	var ifr=document.getElementById('ifr')
 	doc=ifr.contentDocument
 	go=doc.getElementById('go')
 
 	doClick(go)
 
-	setTimeout(checkPrompt, 1000)
+	setTimeout(f, 1000)
 }
 
-reallyLoad2 = function(){
+loadTest =function (f, test){
 	var ifr=document.getElementById('ifr')
-	doc=ifr.contentDocument
-	go=doc.getElementById('go')
+	ifr.src="/static/ctest/ctest.html?load=/static/ctest/test/03-prompt/"+test
 
-	doClick(go)
-	setTimeout(checkErrorAlert, 1000)
+	ifr.onload=setTimeout(function(){ reallyLoad(f) }, 1000)
+}
+
+endOk = function(){
+	if (top.ctt && top.ctt.nextTest)
+		top.ctt.nextTest()
+	else
+		alert('ok')
 }
 
 n=0
@@ -55,11 +60,7 @@ checkPrompt = function(){
 		return;
 	}
 
-
-	var ifr=document.getElementById('ifr')
-	ifr.src="../../ctest.html?load=test/03-prompt/test2.ctest"
-
-	setTimeout(reallyLoad2,500)
+	loadTest(checkErrorAlert, 'test2.ctest')
 }
 
 checkErrorAlert = function(){
@@ -69,22 +70,49 @@ checkErrorAlert = function(){
 	}
 	if (doc.getElementsByClassName('failed_tests').length==0){
 		// no error yet
-		setTimeout(checkError, 500)
+		setTimeout(checkErrorAlert, 500)
 		return;
 	}
 
-	if (top.ctt && top.ctt.nextTest)
-		top.ctt.nextTest()
-	else
-		alert('ok')
-
+	loadTest(checkErrorConfirm, 'test3.ctest')
 }
 
+checkErrorConfirm = function(){
+	if (doc.getElementsByClassName('all_test_passed').length==1){
+		alert('Should have been an error')
+		return;
+	}
+	if (doc.getElementsByClassName('failed_tests').length==0){
+		// no error yet
+		setTimeout(checkErrorConfirm, 500)
+		return;
+	}
+
+	loadTest(checkErrorPrompt, 'test4.ctest')
+}
+
+
+checkErrorPrompt = function(){
+	if (doc.getElementsByClassName('all_test_passed').length==1){
+		alert('Should have been an error')
+		return;
+	}
+	if (doc.getElementsByClassName('failed_tests').length==0){
+		// no error yet
+		setTimeout(checkErrorPrompt, 500)
+		return;
+	}
+
+	endOk()
+}
+
+
 window.onload=function(){
-	setTimeout(reallyload, 500);
+	//loadTest(checkErrorPrompt, 'test3.ctest')
+	loadTest(checkPrompt, 'test.ctest')
 }
 </script>
 <div style="align: center;">
-<iframe id="ifr" src="../../ctest.html?load=test/03-prompt/test.ctest" width="100%" height="98%"></iframe>
+<iframe id="ifr" src="" width="100%" height="98%"></iframe>
 </div>
 </html>
