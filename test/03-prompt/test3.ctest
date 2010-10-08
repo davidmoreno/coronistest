@@ -1,0 +1,4 @@
+open('/static/ctest/test/03-prompt/test.html')
+
+# error on alert
+click('#bconfirm',true)
