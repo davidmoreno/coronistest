@@ -57,6 +57,14 @@ CTestInterpreter = function(stream,file){
 	}
 	/**
 	 * @short Reads a token from the current stream
+	 * 
+	 * It returns a list [type, token].
+	 * 
+	 * Type is:
+	 * 
+	 * c - char
+	 * v - variable
+	 * t - quoted string 
 	 */
 	readToken = function(){
 		/// Gets a string, starts with ' or " and finished with the same. \ is escape.
@@ -117,7 +125,7 @@ CTestInterpreter = function(stream,file){
 	// Reads to the end of the line, normally on comments
 	readLine = function(){
 		var c=getChar()
-		var ret=c
+		var ret=''
 		while (c!='\n'){
 			ret+=c
 			c=getChar()
@@ -145,6 +153,9 @@ CTestInterpreter = function(stream,file){
 
 		if (token[0]!='v')
 			error('Expected identifier')
+		if (token[1]=='javascript'){
+			return ['eval',[ ['t',readBlock()] ],file,line]
+		}
 		id=token[1]
 		token=readToken()
 		if (token[0]!='c')
@@ -153,7 +164,7 @@ CTestInterpreter = function(stream,file){
 			createFunction(id)
 			return false;
 		}
-		var ret=[]
+		var args=[]
 		if (token[1]!='(')
 			error('Expected "=" (function assignment) or "(" (function call)')
 
@@ -161,7 +172,7 @@ CTestInterpreter = function(stream,file){
 		while (token[0]!='c' && token[1]!=')'){
 			if (token[0]!='v' && token[0]!='t')
 				error('Expecting variable name or text as argument')
-			ret.push(token)
+			args.push(token)
 			token=readToken()
 			if (token[0]!='c')
 				error('At function call I was waiting for a "," or ")"')
@@ -182,17 +193,40 @@ CTestInterpreter = function(stream,file){
 				var dn=file.replace(/[^/]*$/,'')
 				return dn;
 			}
-			var fle=ret[0][1]
+			var fle=args[0][1]
 			if (fle[0]!='/'){
 				fle=joinpath(dirname(file),fle)
-				ret[0][1]=fle
+				args[0][1]=fle
 			}
 			ctestui.log('Loading another file: '+fle)
 			ctest.loadFile(fle)
 		}
 
 		//ctest.log($.toJSON(ret))
-		return [id, ret, file, line]
+		return [id, args, file, line]
+	}
+
+	/// Reads a block between { and } and returns it. It can have subblocks.
+	readBlock = function(){
+		var token=readToken()
+		if (token[0]!='c' && token[1]!='{')
+			error('Expecting { to open a block')
+		
+		var block='{\n'
+		var depth=1
+		
+		while (depth>0){
+			var l=readLine()
+			for (var i in l){
+				if (l[i]=='{')
+					depth++;
+				else if (l[i]=='}')
+					depth--;
+			}
+			block+=l+'\n';
+		}
+		
+		return block
 	}
 
 	/// Reads a new function

@@ -52,6 +52,16 @@ concat(varname, txt1, txt2, txt3, txt4)
 
 Concats the txts, and sets the variable varname with such value.
 
+
+eval(javascriptcode)
+--------------------
+
+Evals some javascript code. It also has the long form ofseverl lines:
+
+javascript{
+ ...
+}
+
 load(testfile)
 --------------
 

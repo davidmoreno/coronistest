@@ -346,6 +346,10 @@ commands = {
 	/// Shows an alert with the given text. Usefull for debugging. Can use variables (of course)
 	'alert': function(txt){
 		alert(txt)
+	},
+	/// Evals some javascript code
+	'eval': function(js){
+		eval(js)
 	}
 }
 
