@@ -134,8 +134,15 @@ CTest = function(){
 	this.execCommand = function(command){
 		/// Translates a parameter from ['v','var'] to get the value from where it is or ['t','hello'] to hello.
 		var t = function(param){
-			if (param[0]=='t')
-				return param[1]
+			if (param[0]=='t'){ // basic replacements of ${vars}
+				var mvars=param[1].match(/\${[^}]*}/g)
+				var r=param[1]
+				for(var v in mvars){
+					v=mvars[v]
+					r=r.replace(v,vars[v.substr(2,v.length-3)])
+				}
+				return r
+			}
 			else if (param[0]=='v' && (param[1] in vars))
 				return vars[param[1]]
 			else

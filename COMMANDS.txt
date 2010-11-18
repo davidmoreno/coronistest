@@ -7,6 +7,11 @@ expresions and the following keywords:
 * link=TEXT   -- The link with that text
 * option=TEXT -- The option with that text
 
+Also there is support for varibale expansions on every text, using ${variable_name}. For example:
+
+concat("hello","world")
+type("input","hello ${hello}")
+
 These are the commands available for ctest:
 
 check(element)
@@ -39,7 +44,7 @@ click(element [,waitLoad])
 Clicks on an element so as if the user had clicked with the mouse. Usefull to follow 
 links, press buttons, activate javascript onlick (or event driven) signals...
 
-Optional waitload insters a wait load after clicking. usefull on some scenarios where next
+Optional waitload inserts a wait load after clicking. Useful on some scenarios where next
 actions can be applied both on old page and new, so waiting is highly recomended.
 
 concat(varname, txt1, txt2, txt3, txt4)
@@ -95,6 +100,11 @@ open(url)
 
 Opens the given url. It implies the waitLoad().
 
+select(element, option)
+-----------------------
+
+Selects an option at the given select element.
+
 set(variable, element, atribute)
 --------------------------------
 
@@ -104,7 +114,13 @@ If no attribute is passed, it is copied the text.
 setAttr(element, attribute, value)
 ------------------------------------
 
-Sets the attribute of the given element to the value
+Sets the value at the attribute of the given element.
+
+regexp(variable, original, regexp)
+----------------------------------
+
+Performs a regexp regular expression search on an original text, and stores the first group found
+at variable.
 
 uncheck(element)
 ----------------

@@ -178,6 +178,8 @@ CTestUI = function(){
 			$('#command_back').click()
 
 		var file=cmd[2]
+		if (file=='_internal_')
+			return;
 		var line=cmd[3]
 		$('#control #fileselector').attr('value',file)
 		ctestui.showCurrentSourceFile()

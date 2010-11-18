@@ -151,9 +151,14 @@ commands = {
 	'set' : function(variable, element, attribute){
 		element=$$$(element)
 		if (attribute)
-			commands[variable]=element.attr(attribute)
+			vars[variable]=element.attr(attribute)
 		else
-			commands[variable]=element.text()
+			vars[variable]=element.text()
+	}
+	,
+	/// Do a regexp on an expression, and stores the first group on the given variable
+	'regexp' : function(val, orig,regexp){
+		vars[val]=orig.replace(RegExp(regexp),"\\1")
 	}
 	,
 	/// Sets a attribute value
