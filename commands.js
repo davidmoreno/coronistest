@@ -4,12 +4,16 @@
 $$$ = function(_id){ 
 	var id=_id
 	// presearch
+	var noregex = function(t){ // basic remove regexp.. normally its just this.
+		return t.replace(".*","")
+	}
+	
 	if (id.substr(0,5)=='link='){
 		var ltext=id.substr(5)
-		id='a:contains("'+ltext+'")'
+		id='a:contains("'+noregex(ltext)+'")'
 	}
 	else if (id.substr(0,7)=='option='){
-		id='option:contains("'+id.substr(7)+'")'
+		id='option:contains("'+noregex(id.substr(7))+'")'
 	}
 
 	//ctestui.log(id)
@@ -21,7 +25,7 @@ $$$ = function(_id){
 		var el=[]
 		$.each(element, function(i){
 			thistext=$(this).text().replace(/[ ]*$/,'').replace(/^[ ]*/,'')
-			if (thistext==ltext)
+			if (thistext.match(RegExp(ltext)))
 				el.push(this)
 		})
 		element=$(el)
@@ -157,8 +161,8 @@ commands = {
 	}
 	,
 	/// Do a regexp on an expression, and stores the first group on the given variable
-	'regexp' : function(val, orig,regexp){
-		vars[val]=orig.replace(RegExp(regexp),"\\1")
+	'regexp' : function(variable, orig,regexp){
+		vars[variable]=orig.match(RegExp(regexp))[1]
 	}
 	,
 	/// Sets a attribute value

@@ -281,6 +281,12 @@ CTestUI = function(){
 		t.focus()
 	}
 
+	this.resize = function(){
+		var h=$(window).height()
+		h-=$('#header').height()+$('#control').height()+$('#customcommand').height()+105
+		$('#commandbox').height(h)
+	}
+
 	/// Initializes the gui
 	this.startup = function(){
 		$(document).shortkeys({
@@ -291,13 +297,16 @@ CTestUI = function(){
 			'l':this.toggleLog,
 			'v':this.showVars
 		})
-		this.createOverWindow('command', $('#command_panel'))
+		//this.createOverWindow('command', $('#command_panel'))
 		this.createOverWindow('log', $('#progress_text'))
 
 		$('form#runcommand').submit(this.runCommand)
 
-		$('#command #fileselector').change(this.showCurrentSourceFile)
+		$('#fileselector').change(this.showCurrentSourceFile)
 
+		$(window).resize(this.resize)
+		this.resize()
+		
 		if (location.hash){
 			try{
 				$('iframe').attr('src',location.hash.substr(1))

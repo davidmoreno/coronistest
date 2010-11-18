@@ -13,9 +13,6 @@
 
 <style type="text/css">
 <!--
-body{
-	font-size: 0.9em;
-}
 
 body.all_test_passed{
 	background: #aaffaa;
@@ -25,6 +22,14 @@ body.failed_tests{
 	background: red;
 }
 
+table{
+	background: white;
+	font-size: 8pt;
+}
+
+td{
+	vertical-align: top;
+}
 
 h1 a {
 	color: black;
@@ -42,101 +47,94 @@ div#progress_text{
 	cursor: default;
 }
 
-div#command_panel{
+#commandbox{
 	cursor: default;
+	background: white;
+	width: 30em;
+	overflow: scroll;
+	border: 1px solid #aaa;
 }
-
-div#command_panel td{
+#commandbox td{
 	vertical-align: top;
 	border-bottom: 1px solid #eee;
 }
 
-div#command_panel tr{
+#commandbox tr{
 	border-bottom: 1px solid #aaa;
 	cursor: pointer;
 }
 
-div#command_panel th{
+#commandbox th{
 	font-size: 0.8em;
 	font-weight: bold;
 	color: #aaa;
 	font-family: monospace;
 }
-div#command_panel tr.breakpoint th{
+#commandbox tr.breakpoint th{
 	background: red;
 	color: black;
 }
-div#command_panel tr.breakpoint td{
+#commandbox tr.breakpoint td{
 	border-bottom: 1px solid red;
 	color: black;
 }
 
-div#command_panel pre{
+#commandbox pre{
 	margin: 0px;
 }
 
-div#command_panel ul{
+#commandbox ul{
 	width: 100%;
 	padding: 0px;
 	list-style: none;
 }
 
-
-div#command_panel pre.doing{
+#commandbox pre.doing{
 	background: yellow;
 }
 
-div#command_panel pre.done{
+#commandbox pre.done{
 	color: #33aa33;
 	background: white;
 }
 
-div#command_panel pre.error{
+#commandbox pre.error{
 	color: white;
 	background: red;
 }
-div#command_panel pre.comment{
+#commandbox pre.comment{
 	background: blue;
 	color: white;
 	font-weight: bold;
 }
 
-#commandbox{
-	width: 100%;
-	height: 90%;
-	overflow: scroll;
-	border: 1px solid #aaa;
-}
 
 #status{
+	width: 30em;
+	overflow: hidden;
 	border: 1px solid black;
 	background: #eee;
-	height: 1em;
-	overflow: hidden;
-	float: right;
-	bottom: 0px;
-	display: inline;
 }
 .hidden{
 	display: none;
 }
-pre.status{
+.status{
 	color: green;
 	margin: 0px;
 }
-pre.error{
+.error{
 	color: red;
 	margin: 0px;
 }
-pre.cmd{
+.cmd{
 	color: blue;
 	margin: 0px;
 }
-pre.debug{
+.debug{
 	color: #aaaaaa;
 	margin: 0px;
 }
-pre.vars{
+.vars{
 	font-weight: bold;
 }
 input[type="text"]{
@@ -144,7 +142,6 @@ input[type="text"]{
 	width: 75%;
 }
 .extra{
-	font-size: 0.7em;
 	cursor: pointer;
 	color: blue;
 }
@@ -194,30 +191,39 @@ div#command{
 </head>
 
 <body>
+
+<table height="100%">
+<tr>
+ <td width="80%">
+  <iframe width="100%" height="100%" src="/" id="ctest_iframe=" name="ctest_iframe">
+  </iframe>
+ </td>
+
+ <td id="sidepanel">
+<div id="sidepanel_div">
+
+<div id="header">
 <h1><a href="?" title="Restart Coronis Tests">CTest</a></h1>
 <form method="GET">
 Suite file: <input type="text" name="load" id="load" value="suite.ctest"/> 
 <input type="submit" value="Load suite"/> 
 <input type="button" id="go" value="Go!"/>
 </form>
+<a class="extra" id="showurl" href="/" target="extra">/</a>
 <br/>
 <span id="command_count">0</span> commands
 |
 <a class="extra" onclick="javascript:ctestui.toggleLog()" title="Shows the progress log. Also key 'l'">Show progress log</a>
 |
-<a class="extra" onclick="javascript:ctestui.toggleCommandPanel()" title="Shows the command panel. Also key 'p'">Show command panels</a>
-|
-<a class="extra" onclick="javascript:ctest.step()" title="Performs a step execution. Also key 's'" id="step">Step</a>
-|
-<a class="extra" onclick="javascript:ctest.run()" title="Continues the execution, ignores last error. Also key 'c'">Continue</a>
-|
 Time elapsed: <span class="time_elapsed">00:00</span>
-|
-<a class="extra" id="showurl" href="/" target="extra">/</a>
-
+<br/>
 <div id="status">Wait for loading...</div>
+  <div id="progress_text">
+   Wait for loading...
+  </div>
 
-<div id="command_panel">
+</div>
+
 <div id="control">
 Test file:
 <select id="fileselector">
@@ -229,40 +235,31 @@ Test file:
 |
 <a class="extra" onclick="javascript:ctest.run()" title="Continues the execution, ignores last error. Also key 'c'" id="continue">Continue</a>
 |
-Time elapsed: <span class="time_elapsed">00:00</span>
-|
 <a class="extra" onclick="javascript:ctest.runFromLatestBreakpoint()" title="Starts execution, starting on latest set breakpoint. Also key 'b'">Start from latest breakpoint</a>
 |
 <input type="checkbox" id="follow" name="follow" onclick="ctestui.switchFollowCommand()"><label for="follow">Follow execution</label>
-|
-<a class="extra" onclick="javascript:ctest.doGo()" title="Starts the tests. Also key 'Crtl+G'">Go!</a>
-
-
 </div>
 
 <div id="commandbox"></div>
 
-</div>
-
-<div id="progress_text">
-Wait for loading...
-</div>
-
-<iframe width="100%" height="80%" src="/" id="ctest_iframe=" name="ctest_iframe">
-</iframe>
-
-<form id="runcommand">
-<table>
- <tr>
-  <td><input type="submit" value="Run command"/></td>
-  <td class="input"><input id="runcommand" name="runcommand"/></td>
- </tr>
-</table>
-</form>
-
-<div id="runhistory"><pre>
+<div id="custom_command">
+ <form id="runcommand">
+  <table>
+   <tr>
+    <td><input type="submit" value="Run command"/></td>
+    <td class="input"><input id="runcommand" name="runcommand"/></td>
+   </tr>
+  </table>
+ </form>
+ <div id="runhistory"><pre>
 # Interactive console history.
 </pre></div>
+</div>
+
+</div>
+ </td>
+</tr>
+</table>
 
 </body>
 
