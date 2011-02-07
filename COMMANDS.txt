@@ -22,7 +22,7 @@ Checks a checkbox. See uncheck()
 checkAttr(element, attribute, value)
 ------------------------------------
 
-If value is given checks its equal to attribute value. If not it checks te attribute exists.
+If value is given checks its equal to attribute value. If not it checks the attribute exists.
 
 In any case it returns into 'lasttext' the value of the attribute.
 
@@ -39,7 +39,7 @@ checkText(text,element)
 Checks that the given text exists. If element is provided it checks only in that element.
 
 click(element [,waitLoad])
---------------
+--------------------------
 
 Clicks on an element so as if the user had clicked with the mouse. Usefull to follow 
 links, press buttons, activate javascript onlick (or event driven) signals...
@@ -51,6 +51,13 @@ concat(varname, txt1, txt2, txt3, txt4)
 ---------------------------------------
 
 Concats the txts, and sets the variable varname with such value.
+
+
+drag(element, dx, dy) || drag(element, dest_element)
+----------------------------------------------------
+
+drags and drops an element to a delta place, if dx and dy is provided, or over another 
+dest_element, if no 3rd argument is passed.
 
 
 eval(javascriptcode)

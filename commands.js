@@ -151,6 +151,31 @@ commands = {
 		}
 	}
 	,
+	/// Drag some object somewhere or over some object. Idea from https://github.com/jquery/jquery-ui/blob/master/tests/unit/draggable/draggable_core.js, MIT license
+	'drag' : function(el, dx, dy) {
+		
+		var findCenter = function(el) {
+			var o = el.offset();
+			return {
+				x: Math.floor(o.left + el.outerWidth() / 2),
+				y: Math.floor(o.top + el.outerHeight() / 2)
+			};
+		}
+
+		var element = $$$(el)
+		if (!dy){
+			var dest=$$$(dx)
+			var co=findCenter(element)
+			var cd=findCenter(dest)
+			dx=cd.x-co.x
+			dy=cd.y-co.y
+		}
+		element.simulate("mousedown")
+		element.simulate("mousemove",{clientX:dx, clientY:dy})
+		$$$('body').simulate("mouseup",{clientX:dx, clientY:dy})
+		$$$('body').simulate("click",{clientX:dx, clientY:dy})
+	}
+	,
 	/// Sets a new variable on the commands scope, by default text content
 	'set' : function(variable, element, attribute){
 		element=$$$(element)
@@ -173,11 +198,20 @@ commands = {
 	,
 	/// Checks an attribute exists, and has that value
 	'checkAttr': function(element, attribute, value){
-		element=$$$(element+'['+attribute+']')
+		try{
+			element=$$$(element+'['+attribute+']')
+		}
+		catch(e){
+			element=$$$(element)
+		}
 		vars['lasttext']=element.attr(attribute)
-		if (value)
-			if (vars['lasttext']!=value)
-				throw( {'text':'Value does not match', 'may_appear_later': True} )
+		if (value){
+			if (!vars['lasttext'].match(value))
+				throw( {'text':'Value does not match', 'may_appear_later': true} )
+		}
+		else{
+			throw( {'text':'Attribute not found', 'may_appear_later': true} )
+		}
 	}
 	,
 	/// Writes something on the log
