@@ -35,21 +35,18 @@ Functions
 
 Functions are defined using javascript like syntax:
 
-```
-login = function(user, password){
-   click('link=Login');
-   type('#username',user)
-   type('#password',password)
-   click('input[type=submit]')
-   errorOnNext()
-   checkText('Error on login')
-   errorOnNext()
-   checkElement('link=Login')
-}
+  login = function(user, password){
+    click('link=Login');
+    type('#username',user)
+    type('#password',password)
+    click('input[type=submit]')
+    errorOnNext()
+    checkText('Error on login')
+    errorOnNext()
+    checkElement('link=Login')
+  }
 
-login('admin','admin')
-```
-
+  login('admin','admin')
 
 Inline javascript
 -----------------
@@ -58,13 +55,11 @@ It can embed any javascript code inside the test. It acts as a single command, a
 at that line. It is useful for example to define new custom commands that need javascript. This can be performed 
 as:
 
-```
-javascript{
+  javascript{
 	commands['fail'] = function(){
 		throw { text:"Always fails", may_appear_later:false }
 	}
-}
-```
+  } 
 
 On this example we create a custom javascript command that always fail.
 
