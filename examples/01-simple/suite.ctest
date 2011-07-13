@@ -1,0 +1,28 @@
+log("Start the test")
+
+checkElement('#h')
+type('#h','Hello world')
+
+# We add a button, that sets the #h to -- when clicked
+javascript{
+	$$$('body').append('<input type="submit">').click(function(){
+		$$$('#h').val('--')
+	})
+}
+
+click('[type=submit]')
+checkAttr('#h','value','--')
+
+myset = function(text){
+	type('#h',text)
+}
+
+myset('Hello world again')
+errorOnNext()
+checkText('world')
+javascript{
+	$$$('body').append('That was not text, was an attribute!');
+}
+
+checkText('attribute')
+checkAttr('*','value','.*world.*')
