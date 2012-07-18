@@ -25,7 +25,7 @@ $$$ = function(_id){
 		var el=[]
 		$.each(element, function(i){
 			thistext=$(this).text().replace(/[ ]*$/,'').replace(/^[ ]*/,'')
-			if (thistext.match(RegExp(ltext)))
+			if (thistext.match(RegExp('^'+ltext+'$')))
 				el.push(this)
 		})
 		element=$(el)
@@ -134,7 +134,7 @@ commands = {
 					sx, sy, 0, 0, 
 					false, false, false, false, buttonpressed, null);
 			//ev.initEvent('click',true,true)
-			ctestui.log('click '+element)
+			ctestui.log('click '+t)
 			try{
 				if (this.dispatchEvent)
 					this.dispatchEvent(ev)
@@ -285,7 +285,7 @@ commands = {
 		}
 		if (reg){
 			re=RegExp(reg)
-			if (!re.match(ctest.lastAlert))
+			if (!ctest.lastAlert.match(re))
 				throw( { may_appear_later : false, text : 'Wrong alert found, waiting for'+reg+', found '+txt } )
 		}
 		ctest.lastAlert=false
@@ -299,7 +299,7 @@ commands = {
 		}
 		if (reg){
 			re=RegExp(reg)
-			if (!re.match(ctest.lastPrompt))
+			if (!ctest.lastPrompt.match(re))
 				throw( { may_appear_later : false, text : 'Wrong prompt found, waiting for'+reg+', found '+txt } )
 		}
 		ctest.lastPrompt=false
@@ -315,7 +315,7 @@ commands = {
 
 		if (reg){
 			re=RegExp(reg)
-			if (!re.match(ctest.lastConfirm))
+			if (!ctest.lastConfirm.match(re))
 				throw( { may_appear_later : false, text : 'Wrong confirm found, waiting for'+reg+', found '+txt } )
 		}
 		ctest.lastConfirm=false
@@ -362,7 +362,10 @@ commands = {
 		var oncl=el.attr('onchange')
 		if (oncl){
 			with( frames[0].window ){
-				oncl()
+				if (typeof(oncl)=='string')
+					eval(oncl)
+				else
+					oncl()
 			}
 		}
 	}

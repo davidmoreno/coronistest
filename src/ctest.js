@@ -163,6 +163,7 @@ CTest = function(){
 			ctest.loadCustomCode(cmd.code)
 		}
 		else{
+			var ret
 			//ctestui.log('Command: '+cmd)
 			if (command[1].length==0)
 				ret=cmd()
@@ -218,9 +219,9 @@ CTest = function(){
 				}
 				if (!e.may_appear_later)
 					ctestui.log('Error that is not solvable later')
-
 				// call the failure option
 				onFailure(e)
+				throw(e)
 			}
 			ctest.pageLoaded=false
 			onSuccess()
@@ -254,6 +255,7 @@ CTest = function(){
 				return;
 			}
 			onFailure({text:'No error appeared'})
+			throw(e)
 		}
 		doMyCommand()
 	}
@@ -448,6 +450,8 @@ CTest = function(){
 	 * @short Stops executing and sets the given error
 	 */
 	this.stopExecuting = function(msg, ok){
+		if (console && console.trace)
+			console.trace()
 		ctest.running=false
 		if (ok){
 			$('body').first().addClass('all_test_passed')
@@ -525,40 +529,61 @@ CTest = function(){
 			// 2010 09 22 -- all ctest instances were parent.ctest. Dont know exactly why.
 			this.contentWindow.alert=function(txt){
 				ctestui.log('alert: '+txt); 
-				//ctestui.log(printStackTrace().join('\n'))
-				if (ctest.lastAlert)
+				if (ctest.lastAlert){
+					ctestui.log(printStackTrace().join('\n'))
 					stopExecuting('There was an unmanaged alert, and appeared a new one: '+ctest.lastAlert)
+				}
 				ctest.lastAlert=txt; 
 			}
 			if (ctest.lastPrompt && ctest.nextPrompt==undefined)
 				ctest.stopExecuting('There was an unmanaged prompt: '+ctest.lastPrompt)
 			this.contentWindow.prompt=function(txt){ 
 				ctestui.log('prompt: '+txt); 
-				if (ctest.lastPrompt)
+				if (ctest.lastPrompt){
+					ctestui.log(printStackTrace().join('\n'))
 					stopExecuting('There was an unmanaged prompt, and appeared a new one: '+ctest.lastPrompt)
+				}
 				ctest.lastPrompt=txt; 
 				return ctest.nextPrompt;
 			}
-			if (ctest.lastConfirm && ctest.nextConfirm==undefined)
+			if (ctest.lastConfirm && ctest.nextConfirm==undefined){
+				ctestui.log(printStackTrace().join('\n'))
 				ctest.stopExecuting('There was an unmanaged confirmation: '+ctest.lastconfirm)
+			}
 			this.contentWindow.confirm=function(txt){ 
+				if (ctest.nextConfirm==undefined){
+					ctestui.log(printStackTrace().join('\n'))
+					stopExecuting('There was an unmanaged confirmation, and appeared a new one: '+ctest.lastconfirm)
+				}
 				ctestui.log('confirm: '+txt); 
 				ctestui.log('confirm answer: '+ctest.nextConfirm); 
-				if (ctest.lastConfirm)
+				if (ctest.lastConfirm){
+					ctestui.log(printStackTrace().join('\n'))
 					stopExecuting('There was an unmanaged confirmation, and appeared a new one: '+ctest.lastconfirm)
+				}
 				ctest.lastConfirm=txt; 
 				return ctest.nextConfirm;
+			}
+			if ($('#seamless:checked').length){
+				activateSeamless()
 			}
 		})
 
 		var opts=this.getPageOptions()
 		if ('go' in opts){
-			this.doGo()
+			setTimeout(this.doGo, 2000); // Go in 2s, so I have time to load everything. FIXME! Timeout?? Come on!
 		}
 		if ('load' in opts){
 			$('#load').attr('value',opts['load'].replace(/%2F/g,'/'))
 		}
 
+		$('#seamless').change(function(){
+			if ($('#seamless:checked').length)
+				activateSeamless()
+			else
+				deactivateSeamless()
+		})
+		
 		ctest.loadFile($('#load').attr('value'))
 	}
 

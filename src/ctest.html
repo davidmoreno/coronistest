@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Coronis Test Framework</title>
-<script lang="javascript" src="jquery-1.4.2.min.js"></script>
+<script lang="javascript" src="jquery-1.7.2.min.js"></script>
 <script lang="javascript" src="jquery.json-2.2.min.js"></script>
 <script lang="javascript" src="jquery.simulate.js"></script>
 <script lang="javascript" src="stacktrace.min.js"></script>
@@ -11,6 +11,7 @@
 <script lang="javascript" src="ctestui.js"></script>
 <script lang="javascript" src="commands.js"></script>
 <script lang="javascript" src="interpreter.js"></script>
+<script lang="javascript" src="seamless.js"></script>
 
 <style type="text/css">
 <!--
@@ -249,6 +250,7 @@ Test file:
 
 <div id="custom_command">
  <form id="runcommand">
+  <input type="checkbox" id="seamless" style="width: auto;"><label for="seamless">Activate seamless recording of events (Experimental)</label></input>
   <table>
    <tr>
     <td><input type="submit" value="Run command"/></td>
