@@ -2,14 +2,36 @@
  * @short Allows to seamless use a web page and record events and selections to create a test suite.
  */
 
+seamless_mark='seamless_'+Math.floor(Math.random()*10000000)
+
+/**
+ * @short Gets an element as in $$$, but marks it so its never again get the same (so no duplicate clicks, for example).
+ */
+var s$$$ = function(selector,extraid){
+	var el= $.unique($$$(selector))
+	el=el.filter(function(){
+		if (this['seamless_mark'+extraid])
+			return false;
+		this['seamless_mark'+extraid]=true
+		return true
+	})
+	return el
+}
+
 /**
  * @short Given an element tries to get a unique selector to identify it, or false
  */
 guessSelector = function(element){
+	var beautify=function(sel){
+		/// beautify it a bit
+		sel=sel.replace(/\[id=(.*)\]/,'#$1')
+		sel=sel.replace(/^a:contains\((.*)\)$/,'link=$1')
+		return sel
+	}
 	var isUnique = function(selector){
-		if (!sel)
-			return sel
-		console.log(sel)
+		if (!selector)
+			return selector
+		console.log(selector)
 		try{
 			var me=$$$(selector)
 			if (me.length==1 && me.is(element))
@@ -29,13 +51,15 @@ guessSelector = function(element){
 		var a=attrs[i]
 		var sel=tagname+'['+a+'='+element.attr(a)+']'
 		if (isUnique(sel))
-			return sel
+			return beautify(sel)
 	}
 	
 	// maybe by text inside
 	var sel=tagname+':contains('+element.text()+')'
-	if (isUnique(sel))
-		return sel
+	if (isUnique(sel)){
+		// Return it
+		return beautify(sel)
+	}
 	
 	
 	console.log("Fail")
@@ -54,17 +78,15 @@ seamless = {
 				selector='link='+me.text()
 			}
 			if (selector)
-				$('#runhistory pre').append('click("'+selector+'")\n')
+				ctestui.addCommand('click("'+selector+'")')
 		}
 		
-		var elements=['a','input[type=button]','input[type=submit]']
+		var elements=['a','input','h1','h2','h3','th','td']
+		var selector=[]
 		for (var i in elements){
-			try{
-				$$$(elements[i]).click(logClick)
-			}
-			catch(e){
-			}
+			selector.push(elements[i]+':not(:has(*))')
 		}
+		$.unique(s$$$(selector.join(',')),'click').click(logClick)
 	}
 	,
 	selection:function(){
@@ -84,7 +106,7 @@ seamless = {
 		var mouseup = function(){
 			var st = getSelection();
 			if(st!=''){
-				$('#runhistory pre').append('checkText("'+st+'")\n')
+				ctestui.addCommand('checkText("'+st+'")')
 			}
 		}
 		
@@ -96,21 +118,36 @@ seamless = {
 			var me=$(this)
 			var selector=guessSelector(me)
 			if (selector){
-				$('#runhistory pre').append('type("'+selector+'","'+$(me).val()+'")\n')
+				ctestui.addCommand('type("'+selector+'","'+me.val()+'")')
 			}
 		}
 		
 		try{
-			$$$('input').change(onchange)
+			s$$$('input,textarea','type').change(onchange)
 		}
 		catch(e){
 		}
+	}
+	,
+	select:function(){
+		var onchange=function(){
+			var me=$(this)
+			var selector=guessSelector(me)
+			if (selector){
+				var option=me.children('[value='+me.val()+']').text()
+				ctestui.addCommand('select("'+selector+'","'+option+'")')
+			}
+		}
+		
+		s$$$('select').change(onchange)
 	}
 }
 
 activateSeamless=function(){
 	$('#control').slideUp()
 	$('#commandbox').slideUp()
+	$('textarea').addClass('tall')
+	ctestui.resize()
 	
 	ctestui.log("Load seamlesses.")
 	for (var s in seamless){
@@ -125,8 +162,10 @@ activateSeamless=function(){
 }
 
 deactivateSeamless=function(){
-	alert("Recording seamless is enabled until next page load.")
-	
+	ctestui.log("Recording seamless is enabled until next page load.")
+	ctestui.addCommand('# seamless deactivated')
 	$('#control').slideDown()
 	$('#commandbox').slideDown()
+	$('textarea').removeClass('tall')
+	ctestui.resize()
 }

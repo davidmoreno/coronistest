@@ -257,7 +257,7 @@ CTestUI = function(){
 		var val=t.attr('value')
 		ctestui.log('Running '+val)
 		if (val[0]=='#'){
-			$('#runhistory pre').append(val+'\n')
+			ctestui.addCommand(val)
 			return false;
 		}
 		try{
@@ -267,7 +267,7 @@ CTestUI = function(){
 			ctest.atEnd=function(){
 			  t.select()
 			  t.focus()
-			  $('#runhistory pre').append(val+'\n')
+				ctestui.addCommand(val)
 			}
 		}
 		catch(e){
@@ -282,9 +282,17 @@ CTestUI = function(){
 	}
 
 	this.resize = function(){
-		var h=$(window).height()
-		h-=$('#header').height()+$('#control').height()+$('#customcommand').height()+105
-		$('#commandbox').height(h)
+		if ($('textarea.tall').length){
+			var h=$(window).height()
+			h-=$('#header').height()+$('#customcommand').height()+105
+			$('textarea.tall').height(h)
+		}
+		else{
+			$('textarea').height(60)
+			var h=$(window).height()
+			h-=$('#header').height()+$('#control').height()+$('#customcommand').height()+105+$('textarea').height()
+			$('#commandbox').height(h)
+		}
 	}
 
 	/// Initializes the gui
@@ -316,6 +324,13 @@ CTestUI = function(){
 		}
 	}
 
+	this.addCommand = function(val){
+		var ta=$('#runhistory textarea')
+		ta.append(val+'\n')
+		ta[0].scrollTop=ta[0].scrollHeight
+		
+	}
+	
 	this.startup()
 }
 

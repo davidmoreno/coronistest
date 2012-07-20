@@ -577,6 +577,9 @@ CTest = function(){
 			$('#load').attr('value',opts['load'].replace(/%2F/g,'/'))
 		}
 
+		$('#apply_seamless').click(function(){
+			activateSeamless()
+		})
 		$('#seamless').change(function(){
 			if ($('#seamless:checked').length)
 				activateSeamless()
