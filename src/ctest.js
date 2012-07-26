@@ -150,8 +150,8 @@ CTest = function(){
 		}
 
 		var cmd=commands[command[0]]
-		if (!cmd)
-			cmd=funcs[command[0]]
+		//if (!cmd)
+		//	cmd=funcs[command[0]]
 		if (!cmd){
 			throw({may_appear_later:false, text:'Command not known: '+command[0]})
 		}
@@ -409,7 +409,7 @@ CTest = function(){
 			for (var f in funcs){
 				var mycode=funcs[f].code
 				$(mycode).each(function(i){
-					ctestui.debug($.toJSON(this))
+					//ctestui.debug($.toJSON(this))
 					if (this[3]==line && this[2]==filename){
 						ctestui.debug('HERE!')
 						cp=i

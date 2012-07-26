@@ -266,9 +266,10 @@ CTestInterpreter = function(stream,file){
 
 			token=readToken()
 		}while(token[0]!='c' && token[1]!='}')
-		
+
 		ctestui.log('added function '+id)
 		c['functions'][id]={'code':code, 'args':args}
+		commands[id]=c['functions'][id]
 	}
 
 	//file=file.replace('.','_').replace('-','_').replace(' ','_')
@@ -285,7 +286,7 @@ CTestInterpreter = function(stream,file){
 	}
 	catch(e){
 		if (e.error){
-			txt=e.error+"\nLine: "+e.line+"\nRead token: "+$.toJSON(e.lastToken)
+			txt=e.error+"\nLine: "+e.line // +"\nRead token: "+$.toJSON(e.lastToken)
 			alert(txt)
 		}
 		else

@@ -325,8 +325,12 @@ CTestUI = function(){
 	}
 
 	this.addCommand = function(val){
+		if (val==this.last_add_command)
+			return
+		this.last_add_command=val
 		var ta=$('#runhistory textarea')
-		ta.append(val+'\n')
+		ta.val(ta.val()+val+'\n')
+		ta.text(ta.val())
 		ta[0].scrollTop=ta[0].scrollHeight
 		
 	}
