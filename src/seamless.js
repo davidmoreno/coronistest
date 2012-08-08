@@ -49,12 +49,17 @@ guessSelector = function(element){
 	var attrs=['id','name','class','alt','title']
 	
 	var tagname=element[0].tagName.toLowerCase()
+	var selectorsNotUnique=[]
 	
 	for (var i in attrs){
 		var a=attrs[i]
-		var sel=tagname+'['+a+'='+element.attr(a)+']'
-		if (isUnique(sel,element))
-			return beautify(sel)
+		var attr=element.attr(a)
+		if (attr){
+			var sel=tagname+'['+a+'='+attr+']'
+			if (isUnique(sel,element))
+				return beautify(sel)
+			selectorsNotUnique.push(sel)
+		}
 	}
 	
 	// maybe by text inside
@@ -64,6 +69,21 @@ guessSelector = function(element){
 		if (isUnique(sel,element)){
 			// Return it
 			return beautify(sel)
+		}
+	}
+	
+	if (selectorsNotUnique.length>0){ // Ok, so lets see if I can get a selector from a parent, and from there make it unique.
+		var el=element.parent()
+		while(el){
+			var psel=guessSelector(el)
+			if (psel){
+				for (var i in selectorsNotUnique){
+					var sel=psel+' '+selectorsNotUnique[i]
+					if (isUnique(sel, element))
+						return sel
+				}
+			}
+			el=el.parent()
 		}
 	}
 	
