@@ -191,7 +191,7 @@ CTestUI = function(){
 	/// A new URL was loaded
 	this.newURL = function(url){
 		this.log('Loaded url '+url)
-		$('#showurl').text(url).attr('href',url)
+		$('#showurl').text(url.substr(30)).attr('href',url)
 		location.hash=url
 	}
 

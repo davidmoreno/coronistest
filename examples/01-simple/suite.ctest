@@ -5,7 +5,7 @@ type('#h','Hello world')
 
 # We add a button, that sets the #h to -- when clicked
 javascript{
-	$$$('body').append('<input type="submit">').click(function(){
+	$$$('body').append('<input type="submit" id="do-it">').click(function(){
 		$$$('#h').val('--')
 	})
 }
