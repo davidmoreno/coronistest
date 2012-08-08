@@ -46,10 +46,10 @@ guessSelector = function(element){
 		return sel
 	}
 	
-	var attrs=['id','name','class','alt','title']
+	var attrs=['id','name','class','alt','title','type']
 	
 	var tagname=element[0].tagName.toLowerCase()
-	var selectorsNotUnique=[]
+	var selectorsNotUnique=[tagname]
 	
 	for (var i in attrs){
 		var a=attrs[i]
