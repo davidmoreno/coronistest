@@ -73,6 +73,6 @@ Just now there is not a lot of documentation, but please, check the commands.js 
 Colaborate!
 ===========
 
-Please, fork this project, test it, send comments and questions! Together we can make this a great test framework!
+Please, fork this project, test it, send comments and questions! Together we can make this a great test framework! It's BSD licensed!
 
 You can contact us at info@coralbits.com.

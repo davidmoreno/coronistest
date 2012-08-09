@@ -32,18 +32,44 @@ td{
 
 h1 a {
 	color: black;
-	display: inline;
 	text-decoration: none;
-	float: left;
 	margin-right: 1em;
+}
+h1{
+	margin:0px;
 }
 
 iframe {
-	border: 1px solid blue;
+	border: 1px solid black;
 }
 
 div#progress_text{
 	cursor: default;
+}
+
+
+#forkme{
+	position: absolute;
+	top:0px;
+	right:0px;
+}
+#go input{
+	margin: auto;
+	display: block;
+	width: 50%;
+	height: 3em;
+	background: #7FFF00;
+	border: 1px solid #ADFF2F;
+	border-radius: 2px;
+	box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+	cursor: pointer;
+}
+#go input:hover{
+	background: #ADFF2F;
+}
+
+div#go{
+	text-align: center;
 }
 
 #commandbox{
@@ -217,6 +243,10 @@ div#command{
 #commandhelp li{
 	list-style: none;
 }
+#copyright{
+	text-align: right;
+}
+
 -->
 </style>
 
@@ -235,12 +265,12 @@ div#command{
 <div id="sidepanel_div">
 
 <div id="header">
-<h1><a href="?" title="Restart Coronis Tests">CTest</a></h1>
-<form method="GET">
-Suite file: <input type="text" name="load" id="load" value="suite.ctest"/> 
-<input type="submit" value="Load suite"/> 
-<input type="button" id="go" value="Go!"/>
-</form>
+<a id="forkme" href="https://github.com/davidmoreno/coronistest"><img src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+<h1><a href="https://github.com/davidmoreno/coronistest" title="Coronis Tests Home page">Coronis Test</a></h1>
+<div><form method="GET">
+<input type="submit" value="Load suite"/>  <input type="text" name="load" id="load" value="suite.ctest"/> 
+</form></div>
+<div id="go"><input type="button" value="Go!"/></div>
 <a class="extra" id="showurl" href="/" target="extra">/</a>
 <br/>
 <span id="command_count">0</span> commands
@@ -293,6 +323,7 @@ Test file:
 </div>
 
 </div>
+  <div id="copyright">Coronis Test &copy; 2010-2012 Coralbits S.L. BSD licensed.</div>
  </td>
 </tr>
 </table>
