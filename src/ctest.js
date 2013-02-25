@@ -29,6 +29,8 @@ CTest = function(){
 
 	/// Milliseconds to wait between retries, usually 100 retries
 	this.stepSpeed=25
+	/// Number of retries. This makes the waiting time to load pages (for example) stepSpeed * retries
+	this.retries=200
 	// How many commands passed
 	this.commandCount = 0
 	// If running just now
@@ -83,7 +85,7 @@ CTest = function(){
 
 		// Commands to execute if executing a normal function succeed
 		var nextStep = function(){
-			ctestui.debug('nextStep at level '+depth+', last took '+(100-ctest.notHereCounter)+' tries')
+			ctestui.debug('nextStep at level '+depth+', last took '+(ctest.retries-ctest.notHereCounter)+' tries')
 			ctestui.setCommandStatus(cmd, 'done')
 			ctest.commandCount+=1
 			$('#command_count').text(ctest.commandCount)
@@ -187,7 +189,7 @@ CTest = function(){
 	/// When sucesfull, calls onSuccess, or on failure calls onFailure.
 	this.doInstruction = function(command, onSuccess, onFailure){
 		//ctestui.log('do instruction: '+$.toJSON(command))
-		ctest.notHereCounter=100
+		ctest.notHereCounter=ctest.retries
 		if (ctestui.followCommand)
 			ctestui.showCommand(command)
 
@@ -232,7 +234,7 @@ CTest = function(){
 	/// Performs a single instruction; or more it tries to do it many times until succeed
 	/// This version looks for an error, if no error keeps trying until error.
 	this.doInstructionError = function(command, onSuccess, onFailure){
-		ctest.notHereCounter=100
+		ctest.notHereCounter=ctest.retries
 		ctestui.log('do instruction error '+command)
 
 		// Just do my command many times.
@@ -519,6 +521,8 @@ CTest = function(){
 			ctest.urlHistory.push(url)
 			ctest.pageLoaded=true
 
+			printStackTrace = function(){ return [] } // TODO
+
 			// Overwrite default bhaviour of some browser parts
 			//ctestui.log('alert status: '+ctest.lastAlert+' / '+ctest.nextAlert)
 			if (ctest.lastAlert && ctest.nextAlert==undefined){
@@ -531,6 +535,7 @@ CTest = function(){
 				ctestui.log('alert: '+txt); 
 				if (ctest.lastAlert){
 					ctestui.log(printStackTrace().join('\n'))
+					ctest.lastAlert=false
 					stopExecuting('There was an unmanaged alert, and appeared a new one: '+ctest.lastAlert)
 				}
 				ctest.lastAlert=txt; 
@@ -541,18 +546,20 @@ CTest = function(){
 				ctestui.log('prompt: '+txt); 
 				if (ctest.lastPrompt){
 					ctestui.log(printStackTrace().join('\n'))
+					ctest.lastPrompt=false
 					stopExecuting('There was an unmanaged prompt, and appeared a new one: '+ctest.lastPrompt)
 				}
 				ctest.lastPrompt=txt; 
 				return ctest.nextPrompt;
 			}
 			if (ctest.lastConfirm && ctest.nextConfirm==undefined){
-				ctestui.log(printStackTrace().join('\n'))
 				ctest.stopExecuting('There was an unmanaged confirmation: '+ctest.lastconfirm)
 			}
 			this.contentWindow.confirm=function(txt){ 
+				ctestui.log('confirm: '+txt); 
 				if (ctest.nextConfirm==undefined){
 					ctestui.log(printStackTrace().join('\n'))
+					ctest.lastConfirm=false
 					stopExecuting('There was an unmanaged confirmation, and appeared a new one: '+ctest.lastconfirm)
 				}
 				ctestui.log('confirm: '+txt); 

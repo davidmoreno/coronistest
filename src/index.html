@@ -278,7 +278,7 @@ div#command{
 <a class="extra" onclick="javascript:ctestui.toggleLog()" title="Shows the progress log. Also key 'l'">Show progress log</a>
 |
 Time elapsed: <span class="time_elapsed">00:00</span>
-|
+<br/>
 <input type="checkbox" id="follow" name="follow" onclick="ctestui.switchFollowCommand()"><label for="follow">Follow execution</label>
 <br/>
 <div id="status">Wait for loading...</div>
@@ -308,12 +308,12 @@ Test file:
  <form id="runcommand">
   <input type="button" id="apply_seamless" value="Apply" title="Apply when AJAX content is loaded. Else may not work on that content"/>
   <input type="button" id="search_selector" value="Search" title="Apply when AJAX content is loaded. Else may not work on that content"/>
-  <input type="checkbox" id="seamless" style="width: auto;"><label for="seamless">Activate seamless recording of events (Experimental)</label></input>
+  <input type="checkbox" id="seamless" style="width: auto;"><label for="seamless">Activate seamless recording of events (Experimental)</label>
   <table>
    <tr>
     <td><input type="submit" value="Run command"/></td>
     <td class="input"> <div id="commandhelp"></div>
-<input id="runcommand" name="runcommand"/></td>
+<input id="runcommand" name="runcommand"></td>
    </tr>
   </table>
  </form>

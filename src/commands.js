@@ -324,16 +324,19 @@ commands = {
 	,
 	// Prepares the system to receive an alert (only one) soon.
 	'nextAlert' : function(){
+		ctest.lastAlert=false
 		ctest.nextAlert=true
 	}
 	,
 	// Sets the next confirmation
 	'nextConfirm' : function(val){
+		ctest.lastConfirm=false
 		ctest.nextConfirm=val
 	}
 	,
 	// Sets the next prompt response
 	'nextPrompt' : function(val){
+		ctest.lastPrompt=false
 		ctest.nextPrompt=val
 	}
 	,
@@ -391,6 +394,10 @@ commands = {
 	/// Evals some javascript code
 	'eval': function(js){
 		eval(js)
+	},
+	/// Just throws an error, for use at javascript{} blocks
+	'error': function(msg, may_appear_later){
+		throw( {'text':msg, 'may_appear_later': may_appear_later ? true : false} )
 	}
 }
 

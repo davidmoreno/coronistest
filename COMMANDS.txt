@@ -69,6 +69,11 @@ javascript{
  ...
 }
 
+error(message, may_appear_later)
+--------------------------------
+
+Throws an error like other commands. For use at javascript{} blocks. 
+
 load(testfile)
 --------------
 
@@ -100,7 +105,7 @@ nextConfirm(bool)
 Returns the given value to the next confirmation that appears. Remember that
 it must be matched with a waitConfirm() to avoid the error of not aknowledging it.
 
-nextPrompt(bool)
+nextPrompt(txt)
 ----------------
 
 Returns the given value to the next prompt that appears. Remember that
