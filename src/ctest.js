@@ -12,6 +12,8 @@ CTest = function(){
 	/// If we should switch error reporting on next step: and error is ok, no error is bad. 
 	/// 0 - Error no tolerable
 	/// 1 - Waiting for error
+	/// 2 - Maybe error, dont care
+	/// 3 - Skip next command.
 	this.errorOnNext=0
 	/// url history of loaded pages, sometimes usefull to debug
 	this.urlHistory=[]
@@ -123,10 +125,20 @@ CTest = function(){
 		ctestui.logCommand(cmd)
 
 		ctestui.setCommandStatus(cmd, 'doing')
-		if (ctest.errorOnNext!=1)
+		if (ctest.errorOnNext==0)
 			ctest.doInstruction(cmd, nextStep, failure)
-		else{
+		else if (ctest.errorOnNext==1){
 			ctest.doInstructionError(cmd, nextStep, failure)
+		}
+		else if (ctest.errorOnNext==2){
+			ctest.doInstructionNoFail(cmd, nextStep)
+		}
+		else if (ctest.errorOnNext==3){
+			ctest.errorOnNext=0
+			nextStep()
+		}
+		else{
+			throw ({may_appear_later:false, text:'Unknown error state'})
 		}
 	}
 
@@ -262,10 +274,52 @@ CTest = function(){
 		doMyCommand()
 	}
 
+		/// Performs a single instruction; or more it tries to do it many times until succeed
+	/// When sucesfull, calls onSuccess, or on failure calls onFailure.
+	this.doInstructionNoFail = function(command, onSuccess){
+		//ctestui.log('do instruction: '+$.toJSON(command))
+		ctest.notHereCounter=ctest.retries
+		if (ctestui.followCommand)
+			ctestui.showCommand(command)
+
+		if (ctest.running && !ctest.ignoreNextBreakpoint &&
+			ctest.breakpoints[command[2]] && ctest.breakpoints[command[2]][command[3]]) {
+			ctestui.log('Breakpoint!')
+			ctestui.showCommand(command)
+			ctest.ignoreNextBreakpoint=true
+			ctest.running=false
+			return;
+		}
+		ctest.ignoreNextBreakpoint=false
+
+		// Just do my command many times.
+		doMyCommand = function(){
+			//ctestui.debug('docommand try '+ctest.notHereCounter+', command '+command)
+			try{
+				//ctestui.debug('>doeval -- '+'commands.do'+$.toJSON(command))
+				ctest.execCommand(command)
+				//ctestui.debug('<doeval -- '+'commands.do'+$.toJSON(command))
+			}
+			catch(e){ // errors
+				if ( e.may_appear_later && (ctest.notHereCounter>0) ){
+					ctest.notHereCounter-=1
+					ctest.setFunctionForNextRound(doMyCommand)
+					return;
+				}
+				ctest.errorOnNext=0
+				onSuccess()
+			}
+			ctest.pageLoaded=false
+			ctest.errorOnNext=0
+			onSuccess()
+		}
+		doMyCommand()
+	}
+
 	/// Do the running
 	this.run = function(){
 		ctest.running=true
-		ctest.errorOnNext=false
+		ctest.errorOnNext=0
 		ctest.step()
 	}
 

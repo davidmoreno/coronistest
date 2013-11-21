@@ -177,7 +177,7 @@ commands = {
 	}
 	,
 	/// Sets a new variable on the commands scope, by default text content
-	'set' : function(variable, element, attribute){
+	'getAttr' : function(variable, element, attribute){
 		element=$$$(element)
 		if (attribute)
 			vars[variable]=element.attr(attribute)
@@ -248,6 +248,22 @@ commands = {
 		}
 		catch(e){
 			throw({ may_appear_later: true, text: "Element '"+element+"' not present" })
+		}
+	}
+	,
+	/// Checks if an element exists and the performs next action if true. This does not wait until element may appear. If so, 
+	/// wait for another element, and the make the if, or prepend by mayFail, checkElement and then the if.
+	'ifElement' : function(el){
+		try{
+			var el=$$$(el)
+			vars['lasttext']=el.text()
+			ctest.errorOnNext=0
+			ctestui.log("Do next command")
+		}
+		catch(e){
+			ctestui.log(e)
+			ctest.errorOnNext=3
+			ctestui.log("Skip next command")
 		}
 	}
 	,
@@ -352,6 +368,11 @@ commands = {
 		vars[arg]=t
 	}
 	,
+	// Sets a value into a variable
+	'set' : function(arg, t){
+		vars[arg]=t
+	}
+	,
 	/// Selectes a value by text on a <select>
 	'select' : function(el, txt){
 		var el=$$$(el)
@@ -386,6 +407,9 @@ commands = {
 		var el=$$$(_el)
 		el.attr('style','background: yellow')
 		vars['lastmark']=_el
+	},
+	'mayFail' : function(){
+		ctest.errorOnNext=2
 	},
 	/// Shows an alert with the given text. Usefull for debugging. Can use variables (of course)
 	'alert': function(txt){

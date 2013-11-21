@@ -74,6 +74,11 @@ error(message, may_appear_later)
 
 Throws an error like other commands. For use at javascript{} blocks. 
 
+ifElementExists(element)
+------------------------
+
+If the given element exists, next command is executed, if not, its skipped.
+
 load(testfile)
 --------------
 
@@ -89,6 +94,12 @@ errorOnNext()
 
 An error is expected on next command. If it succeeds then it fails, and if 
 it fails it succeed. Usefull for example to check if some text is not present.
+
+getAttr(variable, element, atribute)
+------------------------------------
+
+Sets to the internal variable *variable* the content of the attribute of the given element.
+If no attribute is passed, it is copied the text.
 
 nextAlert()
 -----------
@@ -117,6 +128,13 @@ mark(element)
 Just changes the background to yellow. Usefull when debugging to look for elements, and also to
 check which one was specifically addressed.
 
+
+mayFail()
+---------
+
+Next command may fail or not. Its not important. This is useful for some states which are 
+not well defined, as the start of a new test.
+
 open(url)
 ---------
 
@@ -127,11 +145,10 @@ select(element, option)
 
 Selects an option at the given select element.
 
-set(variable, element, atribute)
---------------------------------
+set(variable, value)
+--------------------
 
-Sets to the internal variable *variable* the content of the attribute of the given element.
-If no attribute is passed, it is copied the text.
+Sets a single value into a variable. 
 
 setAttr(element, attribute, value)
 ------------------------------------

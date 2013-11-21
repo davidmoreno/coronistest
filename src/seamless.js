@@ -32,10 +32,28 @@ var isUnique = function(selector, element){
 	return false
 }
 
+var guessSelectorStackCountLimit=50
+var guessSelectorScackCount=0
+
+
+guessSelector = function(element){
+	guessSelectorScackCount=0
+	return guessSelectorRec(element)
+}
+
 /**
  * @short Given an element tries to get a unique selector to identify it, or false
  */
-guessSelector = function(element){
+guessSelectorRec = function(element){
+	if (guessSelectorScackCount>guessSelectorStackCountLimit)
+		return ''
+	guessSelectorScackCount+=1
+	
+	if (element.length==0 || !element[0]){
+		ctestui.log("Cant guess selector for no element")
+		return ''
+	}
+	
 	if (!element[0]['seamless_mark_'+seamless_mark]){
 		activateSeamless()
 	}
@@ -48,7 +66,12 @@ guessSelector = function(element){
 	
 	var attrs=['id','name','class','alt','title','type']
 	
-	var tagname=element[0].tagName.toLowerCase()
+	try{
+		var tagname=element[0].tagName.toLowerCase()
+	}
+	catch(e){
+		tagname=''
+	}
 	var selectorsNotUnique=[tagname]
 	
 	for (var i in attrs){
@@ -74,8 +97,8 @@ guessSelector = function(element){
 	
 	if (selectorsNotUnique.length>0){ // Ok, so lets see if I can get a selector from a parent, and from there make it unique.
 		var el=element.parent()
-		while(el){
-			var psel=guessSelector(el)
+		while(el.length>0){
+			var psel=guessSelectorRec(el)
 			if (psel){
 				for (var i in selectorsNotUnique){
 					var sel=psel+' '+selectorsNotUnique[i]
